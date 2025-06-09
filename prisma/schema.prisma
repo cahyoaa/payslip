@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  salary    Float
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  createdIp String?
+  updatedIp String?
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+  createdIp String?
+  updatedIp String?
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  model      String
+  modelId    Int
+  action     String
+  userId     Int?
+  ipAddress  String?
+  timestamp  DateTime @default(now())
+  dataBefore Json?
+  dataAfter  Json?
+}
